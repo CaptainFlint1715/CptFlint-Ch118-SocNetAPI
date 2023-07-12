@@ -1,45 +1,6 @@
 const { ObjectId } = require('mongoose').Types;
-const { Student, Course } = require('../models');
+const { Thought, User } = require('../models');
 
-const headCount = async () => {
-  try {
-    const numberOfStudents = await Student.aggregate([
-      {
-        $group: {
-          _id: null,
-          count: { $sum: 1 }
-        }
-      }
-    ]);
-    return numberOfStudents;
-  } catch (error) {
-    console.error('Error occurred while getting the head count:', error);
-    throw error;
-  }
-};
-
-const grade = async (studentId) => {
-  try {
-    const overallGrade = await Student.aggregate([
-      {
-        $match: { _id: new ObjectId(studentId) }
-      },
-      {
-        $unwind: '$assignments'
-      },
-      {
-        $group: {
-          _id: '$_id',
-          overallGrade: { $avg: '$assignments.score' }
-        }
-      }
-    ]);
-    return overallGrade;
-  } catch (error) {
-    console.error('Error occurred while calculating the overall grade:', error);
-    throw error;
-  }
-};
 module.exports = {
   // Get all students
   async getStudents(req, res) {
