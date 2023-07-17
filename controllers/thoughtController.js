@@ -6,11 +6,7 @@ module.exports = {
   async getThoughts(req, res) {
     try {
       const thoughts = await Thought.find();
-      const thoughtObj = {
-        thoughts,
-        headCount: await headCount(),
-      };
-      return res.json(thoughtObj);
+      return res.json(thoughts);
     } catch (err) {
       console.log(err);
       return res.status(500).json(err);
@@ -40,6 +36,13 @@ module.exports = {
   async createThought(req, res) {
     try {
       const thought = await Thought.create(req.body);
+      const { username } = req.body
+
+      await User.findOneAndUpdate(
+        { username: username },
+        { $push: { thoughts: thought._id } }
+      )
+
       res.json(thought);
     } catch (err) {
       res.status(500).json(err);
@@ -120,8 +123,8 @@ module.exports = {
       const reactionId = req.params.reactionId
 
       const updatedThought  = await Thought.findOneAndUpdate(
-        { _id: thoughtId },
-        { $pull: { reactions: { reactionId: reactionId } } },
+        { _id: thoughtId, 'reactions._id': reactionId },
+        { $pull: { reactions: { _id: reactionId}  } },
         { new: true }
       )
 

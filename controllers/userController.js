@@ -78,7 +78,8 @@ module.exports = {
 
       const user = await User.findOneAndUpdate(
         { _id: userId },
-        { $push: {friends: { friendId } } }
+        { $push: {friends: friendId } },
+        { new: true }
       );
       res.json(user);
     } catch (err) {
@@ -93,16 +94,13 @@ module.exports = {
       const friendId = req.params.friendId
 
       const user = await User.findOneAndUpdate(
-        { _id: userId },
-        { $pull: { friends: { friendId } } },
+        { _id: userId, friends: friendId },
+        { $pull: { friends:  friendId } },
         { new: true }     
       );
 
       if (!user) {
         return res.status(404).json({ message: 'No user with that ID' });
-      }
-      if (!friend) {
-        return res.status(404).json({ message: 'No friend with that ID' });
       }
 
       res.json({ message: 'Friend deleted!' });
@@ -111,3 +109,26 @@ module.exports = {
     }
   },
 };
+
+
+  // 'POST' to create a reaction stored in a single thought's 'reactions' array field
+  // async createReaction(req, res) {
+  //   try {
+  //     const thoughtId = req.params.thoughtId
+  //     const { reactionBody, username } = req.body
+
+  //     const updatedThought = await Thought.findOneAndUpdate(
+  //       { _id: thoughtId },
+  //       { $push: { reactions: { reactionBody, username } } },
+  //       { new: true }
+  //     )
+
+  //     if (!updatedThought) {
+  //       return res.status(404).json({ message: 'No thought with this id!' });
+  //     }
+
+  //     res.json(updatedThought)
+  //   } catch (err) {
+  //     res.status(500).json(err)
+  //   }
+  // },

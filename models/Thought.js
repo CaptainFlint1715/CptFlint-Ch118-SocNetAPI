@@ -4,7 +4,7 @@ const reactionSchema = new Schema(
   {
     reactionId: {
       type: Schema.Types.ObjectId,
-      default: Types.ObjectId
+      default: () => new Types.ObjectId(),
     },
     reactionBody: {
       type: String,
@@ -32,11 +32,6 @@ const thoughtSchema = new Schema(
       required: true,
       maxlength: 280,
       minlength: 1,
-    },
-    score: {
-      type: Number,
-      required: true,
-      default: () => Math.floor(Math.random() * (100 - 70 + 1) + 70),
     },
     createdAt: {
       type: Date,
